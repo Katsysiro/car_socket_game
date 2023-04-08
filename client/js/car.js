@@ -20,14 +20,22 @@ class Car {
         $cars.appendChild($el)
 
         this.localCar = {
+            $el: $el,
             x: x != undefined ? x : WIDTH / 2,
-            x: y != undefined ? y : HEIGHT / 2,
+            y: y != undefined ? y : HEIGHT / 2,
+        }
+
+        this.scene = {
+            x: window.innerWidth / 2 - this.localCar.x,
+            y: window.innerHeight / 2 - this.localCar.y,
         }
 
     }
 
     render () {
+        const { x, y } = this.localCar
 
+        this.localCar.$el.style.transform = `translate(${x}px, ${y}px)`
     }
 
     update () {
