@@ -12,7 +12,7 @@ const $scene = document.querySelector('.scene')
 
 var cars = []
 
-const car = new Car(WIDTH, HEIGHT)
+const car = new Car(WIDTH, HEIGHT, 'USER')
 cars.push(car)
 
 const render = () => {
@@ -25,12 +25,19 @@ const render = () => {
 
     requestAnimationFrame(render)
 
+    // Двигаем сцену относильно тачки 
+    car.scene.x = window.innerWidth / 2 - car.localCar.x
+    car.scene.y = window.innerHeight / 2 - car.localCar.y
+
+    $scene.style.transform = `translate(${car.scene.x}px, ${car.scene.y}px)`
 }
 
 render()
 
 setInterval(() => {
 
-
+    cars.forEach((car) => {
+        car.update()
+    })
 
 }, 1000 / 120)
