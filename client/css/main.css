@@ -70,7 +70,7 @@ canvas {
 }
 
 .car.red .car-body {
-  background-color: hsl(324, 100%, 50%);
+  background-color: hsl(0, 100%, 50%);
 }
 
 .car-name {

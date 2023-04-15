@@ -19,9 +19,13 @@ const render = () => {
 
     ctx.restore()
 
+    cars.forEach((car) => {
+        car.render()
+    })
+
     requestAnimationFrame(render)
 
-} 
+}
 
 render()
 
