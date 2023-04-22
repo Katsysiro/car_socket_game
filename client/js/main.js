@@ -12,7 +12,7 @@ const $scene = document.querySelector('.scene')
 
 var cars = []
 
-const car = new Car(WIDTH, HEIGHT, 100, 100)
+const car = new Car(WIDTH, HEIGHT, 'USER')
 cars.push(car)
 
 const render = () => {
@@ -36,6 +36,8 @@ render()
 
 setInterval(() => {
 
-
+    cars.forEach((car) => {
+        car.update()
+    }) 
 
 }, 1000 / 120)
