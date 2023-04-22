@@ -164,6 +164,14 @@ class Car {
         this.localCar.angularVelocity *= this.angularDrag
 
         // Если выехали да пределы трассы, перебрасываем на другой край
+        if (this.localCar.x > WIDTH + 7.5) {
+            this.localCar.x -= WIDTH + 15;
+            changed = true;
+        } else if (this.localCar.x < -7.5) {
+            this.localCar.x += WIDTH + 15;
+            changed = true;
+        }
+        
         if (this.localCar.y > HEIGHT + 7.5) {
             this.localCar.y -= HEIGHT + 15
             changed = true
