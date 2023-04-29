@@ -6,7 +6,7 @@ canvas.width = WIDTH
 canvas.height = HEIGHT
 
 const ctx = canvas.getContext('2d')
-ctx.fillStyle = 'hsla(0, 0%, 25%, 0.25)'
+ctx.fillStyle = 'hsla(0, 0%, 25%, 0.50)'
 
 const $scene = document.querySelector('.scene')
 
