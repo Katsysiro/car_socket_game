@@ -43,6 +43,8 @@ class Car {
             angularVelocity: 0,
             isThrottling: false,
             isReversing: false,
+            isTurningLeft: false,
+            isTurningRight: false,
         }
 
         this.scene = {
@@ -79,10 +81,12 @@ class Car {
         let changed
 
         const throttle = Math.round(controls.up * 10) / 10
+        const reverse = Math.round(controls.down * 10) / 10
 
-        if (this.localCar.isThrottling !== throttle) {
+        if (this.localCar.isThrottling !== throttle || this.localCar.isReversing !== reverse) {
             changed = true
             this.localCar.isThrottling = throttle
+            this.localCar.isReversing = reverse
         }
 
         // Расчитает положение тачки
@@ -93,13 +97,48 @@ class Car {
             this.localCar.power -= this.powerFactor
         }
 
+        if (this.localCar.isReversing) {
+            this.localCar.reverse += this.reverseFactor
+        }
+        else {
+            this.localCar.reverse -= this.reverseFactor
+        }
+
         this.localCar.power = Math.max(0, Math.min(this.maxPower, this.localCar.power))
+        this.localCar.reverse = Math.max(0, Math.min(this.maxReverse, this.localCar.reverse))
+
+        const canTurn = this.localCar.power > 0.0025 || this.localCar.reverse
+
+        const turnLeft = canTurn && Math.round(controls.left * 10) / 10
+        const turnRight = canTurn && Math.round(controls.right * 10) / 10
+
+        if (this.localCar.isTurningLeft !== throttle || this.localCar.isTurningRight !== reverse) {
+            changed = true
+            this.localCar.isTurningLeft = turnLeft
+            this.localCar.isTurningRight = turnRight
+        }
+
+        const direction = this.localCar.power > this.localCar.reverse ? 1 : -1
+        
+        if (this.localCar.isTurningLeft) {
+            this.localCar.angularVelocity -= direction * this.turnSpeed * this.localCar.isTurningLeft
+        }
+
+        if (this.localCar.isTurningRight) {
+            this.localCar.angularVelocity += direction * this.turnSpeed * this.localCar.isTurningRight
+        }
 
         this.localCar.xVelocity += Math.sin(this.localCar.angle) * (this.localCar.power - this.localCar.reverse)
         this.localCar.yVelocity += Math.cos(this.localCar.angle) * (this.localCar.power - this.localCar.reverse)
 
         this.localCar.x += this.localCar.xVelocity
-        this.localCar.y += this.localCar.yVelocity
+        this.localCar.y -= this.localCar.yVelocity
+
+        this.localCar.xVelocity *= this.drag
+        this.localCar.yVelocity *= this.drag
+
+        this.localCar.angle += this.localCar.angularVelocity
+        this.localCar.angularVelocity *= this.angularDrag
 
         // Если выехали да пределы трассы, перебрасываем на другой край
         if (this.localCar.y > HEIGHT + 7.5) {
@@ -107,6 +146,14 @@ class Car {
             changed = true
         } else if (this.localCar.y < -7.5) {
             this.localCar.y += HEIGHT + 15
+            changed = true
+        }
+
+        if (this.localCar.x > WIDTH + 7.5) {
+            this.localCar.x -= WIDTH + 15
+            changed = true
+        } else if (this.localCar.x < -7.5) {
+            this.localCar.x += WIDTH + 15
             changed = true
         }
     }
