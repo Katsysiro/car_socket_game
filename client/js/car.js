@@ -32,6 +32,7 @@ class Car {
 
         this.localCar = {
             $el: $el,
+            $body: $body,
             x: x != undefined ? x : WIDTH / 2,
             y: y != undefined ? y : HEIGHT / 2,
 
@@ -55,9 +56,31 @@ class Car {
     }
 
     render () {
-        const { x, y } = this.localCar
+        const { x, y, angle, power, reverse, angularVelocity } = this.localCar
 
         this.localCar.$el.style.transform = `translate(${x}px, ${y}px)`
+        
+        this.localCar.$body.style.transform = `rotate(${angle * 180 / Math.PI}deg)`
+
+        // следы шин
+        if ((power > 0.0025) || reverse) {
+            if (((car.maxReverse === reverse) || (car.maxPower === power)) && Math.abs(angularVelocity) < 0.002) {
+                return;
+            }
+
+            ctx.fillRect(
+                x - Math.cos(angle + 3 * Math.PI / 2) * 3 + Math.cos(angle + 2 * Math.PI / 2) * 3,
+                y - Math.sin(angle + 3 * Math.PI / 2) * 3 + Math.sin(angle + 2 * Math.PI / 2) * 3,
+                1,
+                1
+            )
+            ctx.fillRect(
+                x - Math.cos(angle + 3 * Math.PI / 2) * 3 + Math.cos(angle + 4 * Math.PI / 2) * 3,
+                y - Math.sin(angle + 3 * Math.PI / 2) * 3 + Math.sin(angle + 4 * Math.PI / 2) * 3,
+                1,
+                1
+            )
+        }
     }
 
     update () {             
@@ -112,7 +135,7 @@ class Car {
         const turnLeft = canTurn && Math.round(controls.left * 10) / 10
         const turnRight = canTurn && Math.round(controls.right * 10) / 10
 
-        if (this.localCar.isTurningLeft !== throttle || this.localCar.isTurningRight !== reverse) {
+        if (this.localCar.isTurningLeft !== turnLeft || this.localCar.isTurningRight !== turnRight) {
             changed = true
             this.localCar.isTurningLeft = turnLeft
             this.localCar.isTurningRight = turnRight
