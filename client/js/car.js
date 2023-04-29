@@ -26,13 +26,19 @@ class Car {
         const $roof = document.createElement('div')
         $roof.classList.add('car-roof')
 
+        const $name = document.createElement('div')
+        $name.classList.add('car-name')
+
         $body.appendChild($roof)
         $el.appendChild($body)
+        $el.appendChild($name)
         $cars.appendChild($el)
 
         this.localCar = {
             $el: $el,
             $body: $body,
+            $name: $name,
+
             x: x != undefined ? x : WIDTH / 2,
             y: y != undefined ? y : HEIGHT / 2,
 
@@ -46,6 +52,7 @@ class Car {
             isReversing: false,
             isTurningLeft: false,
             isTurningRight: false,
+            name: '! name !'
         }
 
         this.scene = {
@@ -56,11 +63,12 @@ class Car {
     }
 
     render () {
-        const { x, y, angle, power, reverse, angularVelocity } = this.localCar
+        const { x, y, angle, power, reverse, angularVelocity, name } = this.localCar
 
         this.localCar.$el.style.transform = `translate(${x}px, ${y}px)`
         
         this.localCar.$body.style.transform = `rotate(${angle * 180 / Math.PI}deg)`
+        this.localCar.$name.textContent = name || '!'
 
         // следы шин
         if ((power > 0.0025) || reverse) {
@@ -162,6 +170,8 @@ class Car {
 
         this.localCar.angle += this.localCar.angularVelocity
         this.localCar.angularVelocity *= this.angularDrag
+        
+        changed = true
 
         // Если выехали да пределы трассы, перебрасываем на другой край
         if (this.localCar.y > HEIGHT + 7.5) {
@@ -178,6 +188,17 @@ class Car {
         } else if (this.localCar.x < -7.5) {
             this.localCar.x += WIDTH + 15
             changed = true
+        }
+
+        switch (this.controle_mode) {
+            case 'USER':
+                if (changed) {
+                    sendParams(this.localCar)
+                }
+                break
+
+            default:
+                break
         }
     }
 

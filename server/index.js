@@ -29,6 +29,21 @@ io.on('connection', (socket) => {
 
     socket.broadcast.emit('join')
 
+    /*{
+      x,
+      y,
+      xVelocity,
+      yVelocity,
+      power,
+      reverse,
+      angle,
+      angularVelocity,
+      isTurningLeft,
+      isTurningRight,
+      isThrottling,
+      isReversing,
+      name,
+    }*/
     socket.on('params', (params) => {
         socket.broadcast.emit('params', {
             id,
