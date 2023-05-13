@@ -13,21 +13,35 @@
         <div class="wrapper">
             <div class="scene">
                 <canvas></canvas>
+                <canvas id="ray"></canvas>
                 <div class="cars"></div>
             </div>         
         </div>
 
-        <div class="name">
+        <div class="buttons">
+            <button class="clearscreen" onclick="save()">Save</button>
+            <button class="clearscreen" onclick="mutate()">Mutate</button>
+            <button class="clearscreen" onclick="discard()">Delete</button>
+        </div>
+
+        <!--<div class="name">
             <div class="name-bg"></div>
             <form>
-              <input autofocus placeholder="Nickname" autocomplete="nickname">
+              <input autofocus placeholder="Nickname" autocomplete="nickname" minlength="4" maxlength="8">
               <button>Play!</button>
             </form>
-        </div>
+        </div>-->
 
         <script src="https://car.pakastin.fi/socket.io/socket.io.js"></script>
 
+        <script src="js/utils.js"></script>
+        <script src="js/network.js"></script>
+
         <script src="js/controls.js"></script>
+
+        <script src="js/sensor.js"></script>
+        <script src="js/road.js"></script>
+
         <script src="js/car.js"></script>
         <script src="js/socket.js"></script>
 

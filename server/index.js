@@ -1,4 +1,4 @@
-const NODE_PORT = 8082
+const NODE_PORT = 8080
 
 const path = require('path')
 const express = require('express')
