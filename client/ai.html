@@ -14,6 +14,7 @@
         <!--<div class="bullets"></div>-->
         <div class="cars">
           <div class="car red">
+            <!--<canvas id="visualizer"></canvas>-->
             <div class="car-body">
               <div class="car-roof"></div>
             </div>
@@ -25,8 +26,11 @@
     </div>
     <div class="points"></div>
     <div class="buttons">
-      <button class="disconnect">Disconnect</button>
-      <button class="clearscreen">Clear screen</button>
+      <!--<button class="disconnect">Disconnect</button>
+      <button class="clearscreen">Clear screen</button>-->
+      <button class="clearscreen" onclick="save()">Save</button>
+      <button class="clearscreen" onclick="discard()">Delete</button>
+      <button class="clearscreen" onclick="start()">Start</button>
     </div>
 
     <!--<div class="name">
@@ -42,13 +46,17 @@
     <script src="https://car.pakastin.fi/socket.io/socket.io.js"></script>
     
     <script src="js/utils.js"></script>
+    <script src="js/visualizer.js"></script>
+
+    <script src="js/network.js"></script>
     <script src="js/controls.js"></script>
 
-    <script src="js/track.js"></script>
-
+    <script src="js/sensor.js"></script>
     <script src="js/base_car.js"></script>
-    <script src="js/car.js"></script>
+    <script src="js/ai_car.js"></script>
 
-    <script src="js/main.js"></script>
+    <script src="js/road.js"></script>
+    <script src="js/socket.js"></script>
+    <script src="js/ai_main.js"></script>
   </body>
 </html>

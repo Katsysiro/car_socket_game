@@ -8,16 +8,65 @@ canvas.height = HEIGHT
 const ctx = canvas.getContext('2d')
 ctx.fillStyle = 'hsla(0, 0%, 25%, 0.25)'
 
-const visualizerCanvas = document.querySelector('#visualizer')
+//const visualizerCanvas = document.querySelector('#visualizer')
+
+const generateCars = (N) => {
+    var c = []
+
+    for (let i = 0; i < N; i++) {
+        c.push(new Car(WIDTH, HEIGHT, false, WIDTH - 80, HEIGHT / 2))
+    }
+
+    return c
+}
+
+function save(){
+    localStorage.setItem("bestBrain",
+        JSON.stringify(bestCar.brain));
+}
+
+function discard(){
+    localStorage.removeItem("bestBrain");
+}
 
 // Массив всех тачек
-var cars = []
+var N = 1
+var cars = generateCars(N)
 
-const car = new Car(WIDTH, HEIGHT, 'USER', false, WIDTH - 75, HEIGHT / 2)
-cars.push(car)
+let bestCar=cars[0];
+if(localStorage.getItem("bestBrain")){
+    for(let i=0;i<cars.length;i++){
+        cars[i].brain=JSON.parse(
+            localStorage.getItem("bestBrain"));
+        if(i!=0){
+            NeuralNetwork.mutate(cars[i].brain,0.1);
+        }
+    }
+}
+
+function start() {
+    cars.forEach(element => {
+        element.destroy()
+    })
+
+    cars = generateCars(N)
+    bestCar=cars[0];
+    if(localStorage.getItem("bestBrain")){
+        for(let i=0;i<cars.length;i++){
+            cars[i].brain=JSON.parse(
+                localStorage.getItem("bestBrain"));
+            if(i!=0){
+                NeuralNetwork.mutate(cars[i].brain,0.1);
+            }
+        }
+    }
+}
+
+//onst car = new Car(WIDTH, HEIGHT, false, WIDTH / 2, HEIGHT / 2)
+//cars.push(car)
 
 const traffic = [
-    new Car(WIDTH, HEIGHT, true, 725, 600, 1),
+    /*new Car(WIDTH, HEIGHT, true, 725, 600, 1),
     new Car(WIDTH, HEIGHT, true, 750, 675, 2),
     new Car(WIDTH, HEIGHT, true, 775, 725, 3),
     
@@ -27,7 +76,7 @@ const traffic = [
     
     new Car(WIDTH, HEIGHT, true, 725, 500, 7),
     new Car(WIDTH, HEIGHT, true, 750, 450, 8),
-    new Car(WIDTH, HEIGHT, true, 775, 400, 9),
+    new Car(WIDTH, HEIGHT, true, 775, 400, 9),*/
 ]
 
 if (typeof Road !== 'undefined') {
@@ -61,7 +110,9 @@ const render = function() {
     cars.forEach((f_car, index) => {
         f_car.renderCar(f_car, index, ctx)
         if (f_car.sensor != undefined) {
-            f_car.sensor.render(ctxRay)
+            if(!f_car.damage) {
+                //f_car.sensor.render(ctxRay)
+            }
         }
     })
 
@@ -71,17 +122,30 @@ const render = function() {
 
     if (typeof Track !== 'undefined') {
         track.render(ctx)
-    }
+    } 
 
-    requestAnimationFrame(render)    
+    /*bestCar = cars.find(c => c.localCar.y == Math.min(
+        ...cars.filter(c => !c.damage).map(c => c.localCar.y)
+    ) && !c.damage )*/
+    
+    //console.log(cars)
+
+    bestCar = cars.find(c => c.distance == Math.max(
+        ...cars.filter(c => !c.damage).map(c => c.distance)
+    ) && !c.damage )
+
+    //console.log(cars)
+    //console.log(bestCar)
 
     // Двигаем сцену относильно тачки 
-    car.scene.x = window.innerWidth / 2 - car.localCar.x
-    car.scene.y = window.innerHeight / 2 - car.localCar.y
+    bestCar.scene.x = window.innerWidth / 2 - bestCar.localCar.x
+    bestCar.scene.y = window.innerHeight / 2 - bestCar.localCar.y
 
-    $scene.style.transform = `translate(${car.scene.x}px, ${car.scene.y}px)`
+    $scene.style.transform = `translate(${bestCar.scene.x}px, ${bestCar.scene.y}px)`
 
     //Visualizer.drawNetwork(visualizerCtx, car.brain);
+
+    requestAnimationFrame(render) 
 }
 
 render()
@@ -124,9 +188,9 @@ setInterval(() => {
 
 //
 
-const $disconnect = document.querySelector('.disconnect');
+//const $disconnect = document.querySelector('.disconnect');
 
-$disconnect.onclick = () => {
+/*$disconnect.onclick = () => {
     socket.disconnect();
     localCar.name = '';
 
@@ -136,14 +200,14 @@ $disconnect.onclick = () => {
     }
 
     $disconnect.parentNode.removeChild($disconnect);
-};
+};*/
 
-const $clearScreen = document.querySelector('.clearscreen');
+/*const $clearScreen = document.querySelector('.clearscreen');
 
 $clearScreen.onclick = () => {
     ctx.clearRect(0, 0, WIDTH, HEIGHT)
     ctxRay.clearRect(0, 0, WIDTH, HEIGHT)
-};
+};*/
 
 setInterval(() => {
     ctx.fillStyle = 'hsla(0, 0%, 95%, 0.2)'

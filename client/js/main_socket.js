@@ -13,7 +13,7 @@ const visualizerCanvas = document.querySelector('#visualizer')
 // Массив всех тачек
 var cars = []
 
-const car = new Car(WIDTH, HEIGHT, 'USER', false, WIDTH - 75, HEIGHT / 2)
+const car = new Car(WIDTH, HEIGHT)
 cars.push(car)
 
 const traffic = [
@@ -32,10 +32,6 @@ const traffic = [
 
 if (typeof Road !== 'undefined') {
     var road = new Road(canvas.width/2, canvas.height/2, 80)
-}
-
-if (typeof Track !== 'undefined') {
-    var track = new Track(canvas.width/2, canvas.height/2, 80)
 }
 
 const $scene = document.querySelector('.scene');
@@ -67,10 +63,6 @@ const render = function() {
 
     if (typeof Road !== 'undefined') {
         road.render(ctx)
-    }
-
-    if (typeof Track !== 'undefined') {
-        track.render(ctx)
     }
 
     requestAnimationFrame(render)    
@@ -120,7 +112,7 @@ setInterval(() => {
 
 /*if (changed) {
     sendParams(localCar);
-}*/
+    }*/
 
 //
 
@@ -156,12 +148,12 @@ setInterval(() => {
 }, 15 * 1000);
 
 // Окошко ввода имени
-/*const $name = document.querySelector('.name');
+const $name = document.querySelector('.name');
 
 $name.querySelector('form').onsubmit = (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  localCar.name = $name.querySelector('input').value || '';
+    car.localCar.name = $name.querySelector('input').value || '';
 
-  $name.parentNode.removeChild($name);
-};*/
+    $name.parentNode.removeChild($name);
+};
