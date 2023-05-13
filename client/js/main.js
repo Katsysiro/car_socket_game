@@ -41,3 +41,14 @@ setInterval(() => {
     }) 
 
 }, 1000 / 120)
+
+// Окошко ввода имени
+const $name = document.querySelector('.name')
+
+$name.querySelector('form').onsubmit = (e) => {
+    e.preventDefault();
+
+    car.localCar.name = $name.querySelector('input').value || ''
+
+    $name.parentNode.removeChild($name);
+}

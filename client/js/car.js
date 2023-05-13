@@ -10,7 +10,7 @@ class Car {
         this.drag = 0.95
         this.angularDrag = 0.95
         this.turnSpeed = 0.002
-
+        
         this.controle_mode = controle_mode
 
         // Create and draw car
@@ -18,7 +18,15 @@ class Car {
 
         var $el = document.createElement('div')
         $el.classList.add('car')
-        $el.classList.add('red')
+
+        switch (this.controle_mode) {
+            case 'USER':
+                $el.classList.add('red')
+                break
+
+            default:
+                break
+        }
 
         const $body = document.createElement('div')
         $body.classList.add('car-body')
@@ -26,45 +34,53 @@ class Car {
         const $roof = document.createElement('div')
         $roof.classList.add('car-roof')
 
+        const $name = document.createElement('div')
+        $name.classList.add('car-name')
+
         $body.appendChild($roof)
         $el.appendChild($body)
+        $el.appendChild($name)
         $cars.appendChild($el)
 
         this.localCar = {
             $el: $el,
             $body: $body,
+            $name: $name,
+
             x: x != undefined ? x : WIDTH / 2,
             y: y != undefined ? y : HEIGHT / 2,
-
-            angle: 0,
 
             xVelocity: 0,
             yVelocity: 0,
             power: 0,
             reverse: 0,
+            angle: 0,
             angularVelocity: 0,
-
             isThrottling: false,
             isReversing: false,
             isTurningLeft: false,
             isTurningRight: false,
+            name: '! name !'
         }
 
         this.scene = {
             x: window.innerWidth / 2 - this.localCar.x,
-            y: window.innerHeight / 2 - this.localCar.y,
+            y: window.innerHeight / 2 - this.localCar.y 
         }
 
     }
 
     render () {
-        const { x, y, angle, reverse, power, angularVelocity } = this.localCar
+        const { x, y, angle, power, reverse, angularVelocity, name } = this.localCar
 
         this.localCar.$el.style.transform = `translate(${x}px, ${y}px)`
+        
         this.localCar.$body.style.transform = `rotate(${angle * 180 / Math.PI}deg)`
+        this.localCar.$name.textContent = name || '!'
 
+        // следы шин
         if ((power > 0.0025) || reverse) {
-            if (((this.maxReverse === reverse) || (this.maxPower === power)) && Math.abs(angularVelocity) < 0.002) {
+            if (((car.maxReverse === reverse) || (car.maxPower === power)) && Math.abs(angularVelocity) < 0.002) {
                 return;
             }
 
@@ -83,7 +99,7 @@ class Car {
         }
     }
 
-    update () {
+    update () {             
         let controls = {
             up: 0,
             left: 0,
@@ -95,6 +111,7 @@ class Car {
             case 'USER':
                 controls = window.getControls()
                 break
+
             default:
                 break
         }
@@ -105,26 +122,13 @@ class Car {
         const throttle = Math.round(controls.up * 10) / 10
         const reverse = Math.round(controls.down * 10) / 10
 
-        const canTurn = this.localCar.power > 0.0025 || this.localCar.reverse
-        
-        const turnLeft = canTurn && Math.round(controls.left * 10) / 10
-        const turnRight = canTurn && Math.round(controls.right * 10) / 10
-
-        if (this.localCar.isThrottling !== throttle ||
-            this.localCar.isReversing !== reverse
-        ) {
+        if (this.localCar.isThrottling !== throttle || this.localCar.isReversing !== reverse) {
             changed = true
             this.localCar.isThrottling = throttle
             this.localCar.isReversing = reverse
         }
 
-        if (this.localCar.isTurningLeft !== turnLeft || 
-            this.localCar.isTurningRight !== turnRight) {
-            changed = true;
-            this.localCar.isTurningLeft = turnLeft
-            this.localCar.isTurningRight = turnRight
-        }
-
+        // Расчитает положение тачки
         if (this.localCar.isThrottling) {
             this.localCar.power += this.powerFactor * this.localCar.isThrottling
         }
@@ -134,15 +138,27 @@ class Car {
 
         if (this.localCar.isReversing) {
             this.localCar.reverse += this.reverseFactor
-        } else {
+        }
+        else {
             this.localCar.reverse -= this.reverseFactor
         }
 
-        this.localCar.power = Math.max( 0, Math.min(this.maxPower, this.localCar.power) )
+        this.localCar.power = Math.max(0, Math.min(this.maxPower, this.localCar.power))
         this.localCar.reverse = Math.max(0, Math.min(this.maxReverse, this.localCar.reverse))
 
-        const direction = this.localCar.power > this.localCar.reverse ? 1 : -1
+        const canTurn = this.localCar.power > 0.0025 || this.localCar.reverse
 
+        const turnLeft = canTurn && Math.round(controls.left * 10) / 10
+        const turnRight = canTurn && Math.round(controls.right * 10) / 10
+
+        if (this.localCar.isTurningLeft !== turnLeft || this.localCar.isTurningRight !== turnRight) {
+            changed = true
+            this.localCar.isTurningLeft = turnLeft
+            this.localCar.isTurningRight = turnRight
+        }
+
+        const direction = this.localCar.power > this.localCar.reverse ? 1 : -1
+        
         if (this.localCar.isTurningLeft) {
             this.localCar.angularVelocity -= direction * this.turnSpeed * this.localCar.isTurningLeft
         }
@@ -162,22 +178,35 @@ class Car {
 
         this.localCar.angle += this.localCar.angularVelocity
         this.localCar.angularVelocity *= this.angularDrag
+        
+        changed = true
 
         // Если выехали да пределы трассы, перебрасываем на другой край
-        if (this.localCar.x > WIDTH + 7.5) {
-            this.localCar.x -= WIDTH + 15;
-            changed = true;
-        } else if (this.localCar.x < -7.5) {
-            this.localCar.x += WIDTH + 15;
-            changed = true;
-        }
-        
         if (this.localCar.y > HEIGHT + 7.5) {
             this.localCar.y -= HEIGHT + 15
             changed = true
         } else if (this.localCar.y < -7.5) {
             this.localCar.y += HEIGHT + 15
             changed = true
+        }
+
+        if (this.localCar.x > WIDTH + 7.5) {
+            this.localCar.x -= WIDTH + 15
+            changed = true
+        } else if (this.localCar.x < -7.5) {
+            this.localCar.x += WIDTH + 15
+            changed = true
+        }
+
+        switch (this.controle_mode) {
+            case 'USER':
+                if (changed) {
+                    sendParams(this.localCar)
+                }
+                break
+
+            default:
+                break
         }
     }
 
