@@ -18,7 +18,15 @@ class Car {
 
         var $el = document.createElement('div')
         $el.classList.add('car')
-        $el.classList.add('red')
+
+        switch (this.controle_mode) {
+            case 'USER':
+                $el.classList.add('red')
+                break
+
+            default:
+                break
+        }
 
         const $body = document.createElement('div')
         $body.classList.add('car-body')

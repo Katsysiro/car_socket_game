@@ -1,6 +1,6 @@
 const carsById = {}
 
-const socket = io('http://192.168.224.25:8082', {
+const socket = io(window.location.href, {
     withCredetials: true
 })
 

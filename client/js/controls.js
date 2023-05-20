@@ -11,7 +11,7 @@
         down: keyActive('down'),
         left: keyActive('left'),
         right: keyActive('right'),
-        //shoot: keyActive('shoot')
+        shoot: keyActive('shoot')
       };
     };
   
@@ -20,7 +20,7 @@
       down: 40,
       left: 37,
       right: 39,
-      //shoot: 32
+      shoot: 32
     };
     const wasdKeys = {
       up: 87,
@@ -48,7 +48,7 @@
       down: 0,
       left: 0,
       right: 0,
-      //shoot: 0
+      shoot: 0
     };
   
     let touches = 0;
